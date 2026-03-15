@@ -1,56 +1,49 @@
-function importNilai(fileData,fileName,mapel,semester,tahun){
+function importNilai(fileData,fileName,mapel,semester,tahun) {
+  var bytes = Utilities.base64Decode(fileData.split(",")[1]);
 
-var bytes = Utilities.base64Decode(fileData.split(",")[1])
+  var blob = Utilities.newBlob(bytes);
+  blob.setName(fileName);
 
-var blob = Utilities.newBlob(bytes)
+  var file = DriveApp.createFile(blob);
 
-blob.setName(fileName)
+  var resource = {
+    title: file.getName(),
+    mimeType: MimeType.GOOGLE_SHEETS
+  };
 
-var file = DriveApp.createFile(blob)
+  var converted = Drive.Files.copy(resource, file.getId());
 
-var resource = {
-title:file.getName(),
-mimeType:MimeType.GOOGLE_SHEETS
-}
+  var ss = SpreadsheetApp.openById(converted.id);
+  var sheet = ss.getSheets()[0];
+  var data = sheet.getDataRange().getValues();
 
-var converted = Drive.Files.copy(resource,file.getId())
+  data.shift();
 
-var ss = SpreadsheetApp.openById(converted.id)
+  var sheetNilai = getSheet("DATA_NILAI");
 
-var sheet = ss.getSheets()[0]
+  data.forEach(function(row) {
+    var nisn = row[0];
+    var tugas = row[2];
+    var tulis = row[3];
+    var praktik = row[4];
 
-var data = sheet.getDataRange().getValues()
+    var deskripsi = generateDeskripsi(mapel,nilaiAkhir);
 
-data.shift()
+    sheetNilai.appendRow([
+      nisn,
+      mapel,
+      tugas,
+      tulis,
+      praktik,
+      nilaiAkhir,
+      semester,
+      tahun,
+      deskripsi
+    ]);
+  });
 
-var sheetNilai = getSheet("DATA_NILAI")
+  DriveApp.getFileById(file.getId()).setTrashed(true);
+  DriveApp.getFileById(converted.id).setTrashed(true);
 
-data.forEach(function(row){
-
-var nisn = row[0]
-var tugas = row[2]
-var tulis = row[3]
-var praktik = row[4]
-
-var deskripsi = generateDeskripsi(mapel,nilaiAkhir)
-
-sheetNilai.appendRow([
-nisn,
-mapel,
-tugas,
-tulis,
-praktik,
-nilaiAkhir,
-semester,
-tahun,
-deskripsi
-])
-
-})
-
-DriveApp.getFileById(file.getId()).setTrashed(true)
-DriveApp.getFileById(converted.id).setTrashed(true)
-
-return true
-
+  return true;
 }
