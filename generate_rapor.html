@@ -1,0 +1,44 @@
+function generateRaporLengkap(nisn,semester,tahun){
+
+var templateId="ISI_TEMPLATE"
+var folderId="ISI_FOLDER"
+
+var copy = DriveApp.getFileById(templateId).makeCopy()
+
+var doc = DocumentApp.openById(copy.getId())
+
+var body = doc.getBody()
+
+var dataNilai = getNilaiSiswa(nisn,semester,tahun)
+
+buatTabelNilai(body,dataNilai)
+
+buatDeskripsiMapel(body,dataNilai)
+
+var pkl = getDataPKL(nisn)
+
+if(pkl){
+
+body.replaceText("{{TEMPAT_PKL}}",pkl.tempat)
+body.replaceText("{{NILAI_INDUSTRI}}",pkl.nilaiIndustri)
+body.replaceText("{{NILAI_GURU}}",pkl.nilaiGuru)
+body.replaceText("{{NILAI_PKL}}",pkl.nilaiAkhir)
+body.replaceText("{{DESKRIPSI_PKL}}",pkl.deskripsi)
+
+}
+
+doc.saveAndClose()
+
+var pdf = DriveApp
+.getFileById(doc.getId())
+.getAs("application/pdf")
+
+var folder = DriveApp.getFolderById(folderId)
+
+var file = folder.createFile(pdf)
+
+DriveApp.getFileById(doc.getId()).setTrashed(true)
+
+return file.getUrl()
+
+}
