@@ -1,5 +1,3 @@
-GitHub Copilot Chat Assistant
-
 function doGet(e) {
   var page = e && e.parameter.page ? e.parameter.page : "login";
   var template = HtmlService.createTemplateFromFile("layout");
