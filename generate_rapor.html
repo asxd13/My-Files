@@ -1,44 +1,40 @@
-function generateRaporLengkap(nisn,semester,tahun){
+function generateRaporLengkap(nisn, semester, tahun) {
+  var templateId = "ISI_TEMPLATE"
+  var folderId = "ISI_FOLDER"
 
-var templateId="ISI_TEMPLATE"
-var folderId="ISI_FOLDER"
+  var copy = DriveApp.getFileById(templateId).makeCopy()
 
-var copy = DriveApp.getFileById(templateId).makeCopy()
+  var doc = DocumentApp.openById(copy.getId())
 
-var doc = DocumentApp.openById(copy.getId())
+  var body = doc.getBody()
 
-var body = doc.getBody()
+  var dataNilai = getNilaiSiswa(nisn, semester, tahun)
 
-var dataNilai = getNilaiSiswa(nisn,semester,tahun)
+  buatTabelNilai(body, dataNilai)
 
-buatTabelNilai(body,dataNilai)
+  buatDeskripsiMapel(body, dataNilai)
 
-buatDeskripsiMapel(body,dataNilai)
+  var pkl = getDataPKL(nisn)
 
-var pkl = getDataPKL(nisn)
+  if (pkl) {
+    body.replaceText("{{TEMPAT_PKL}}", pkl.tempat)
+    body.replaceText("{{NILAI_INDUSTRI}}", pkl.nilaiIndustri)
+    body.replaceText("{{NILAI_GURU}}", pkl.nilaiGuru)
+    body.replaceText("{{NILAI_PKL}}", pkl.nilaiAkhir)
+    body.replaceText("{{DESKRIPSI_PKL}}", pkl.deskripsi)
+  }
 
-if(pkl){
+  doc.saveAndClose()
 
-body.replaceText("{{TEMPAT_PKL}}",pkl.tempat)
-body.replaceText("{{NILAI_INDUSTRI}}",pkl.nilaiIndustri)
-body.replaceText("{{NILAI_GURU}}",pkl.nilaiGuru)
-body.replaceText("{{NILAI_PKL}}",pkl.nilaiAkhir)
-body.replaceText("{{DESKRIPSI_PKL}}",pkl.deskripsi)
+  var pdf = DriveApp
+    .getFileById(doc.getId())
+    .getAs("application/pdf")
 
-}
+  var folder = DriveApp.getFolderById(folderId)
 
-doc.saveAndClose()
+  var file = folder.createFile(pdf)
 
-var pdf = DriveApp
-.getFileById(doc.getId())
-.getAs("application/pdf")
+  DriveApp.getFileById(doc.getId()).setTrashed(true)
 
-var folder = DriveApp.getFolderById(folderId)
-
-var file = folder.createFile(pdf)
-
-DriveApp.getFileById(doc.getId()).setTrashed(true)
-
-return file.getUrl()
-
+  return file.getUrl()
 }
