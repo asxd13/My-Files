@@ -1,291 +1,214 @@
 <script>
+  function showMessage(msg) {
+    alert(msg)
+  }
 
-function showMessage(msg){
-alert(msg)
-}
+  /* =========================
+     LOGIN FUNCTION
+  ========================= */
 
-/* =========================
-   LOGIN FUNCTION
-========================= */
+  function login() {
+    var lembaga = document.getElementById("lembaga").value
+    var kode = document.getElementById("kode").value
 
-function login(){
+    google.script.run
+      .withSuccessHandler(function (res) {
+        if (res) {
+          window.location = "?page=dashboard"
+        } else {
+          alert("Login gagal")
+        }
+      })
+      .loginSystem(lembaga, kode)
+  }
 
-var lembaga = document.getElementById("lembaga").value
-var kode = document.getElementById("kode").value
+  /* =========================
+     DASHBOARD
+  ========================= */
 
-google.script.run
-.withSuccessHandler(function(res){
-
-if(res){
-
-window.location="?page=dashboard"
-
-}else{
-
-alert("Login gagal")
-
-}
-
-})
-.loginSystem(lembaga,kode)
-
-}
-
-
-/* =========================
-   DASHBOARD
-========================= */
-
-function loadJumlahSiswa(){
-
-google.script.run
-.withSuccessHandler(function(res){
-
-document.getElementById("jumlah_siswa").innerHTML = res
-
-})
-.getJumlahSiswa()
-
-}
-
+  function loadJumlahSiswa() {
+    google.script.run
+      .withSuccessHandler(function (res) {
+        document.getElementById("jumlah_siswa").innerHTML = res
+      })
+      .getJumlahSiswa()
+  }
 </script>
 
 <script>
+  function loadDataSiswa() {
+    google.script.run
+      .withSuccessHandler(function (data) {
+        var tbody = document.querySelector("#tabel_siswa tbody")
 
-function loadDataSiswa(){
+        tbody.innerHTML = ""
 
-google.script.run
-.withSuccessHandler(function(data){
+        data.forEach(function (row) {
+          var tr = document.createElement("tr")
 
-var tbody = document.querySelector("#tabel_siswa tbody")
+          tr.innerHTML = `
+            <td>${row[0]}</td>
+            <td>${row[1]}</td>
+            <td>${row[2]}</td>
+            <td>${row[3]}</td>
+            <td>${row[4]}</td>
+            <td>
+              <button onclick="hapusSiswa('${row[0]}')">Hapus</button>
+            </td>
+          `
 
-tbody.innerHTML=""
-
-data.forEach(function(row){
-
-var tr = document.createElement("tr")
-
-tr.innerHTML = `
-<td>${row[0]}</td>
-<td>${row[1]}</td>
-<td>${row[2]}</td>
-<td>${row[3]}</td>
-<td>${row[4]}</td>
-<td>
-<button onclick="hapusSiswa('${row[0]}')">Hapus</button>
-</td>
-`
-
-tbody.appendChild(tr)
-
-})
-
-})
-.getDataSiswa()
-
-}
-<script>
-
-function simpanSiswa(){
-
-var nisn = document.getElementById("nisn").value
-var nama = document.getElementById("nama").value
-var jk = document.getElementById("jk").value
-var kelas = document.getElementById("kelas").value
-var jurusan = document.getElementById("jurusan").value
-
-google.script.run
-.withSuccessHandler(function(){
-
-alert("Data siswa berhasil disimpan")
-
-loadDataSiswa()
-
-})
-.tambahSiswa(nisn,nama,jk,kelas,jurusan)
-
-}
-
+          tbody.appendChild(tr)
+        })
+      })
+      .getDataSiswa()
+  }
 </script>
 
 <script>
+  function simpanSiswa() {
+    var nisn = document.getElementById("nisn").value
+    var nama = document.getElementById("nama").value
+    var jk = document.getElementById("jk").value
+    var kelas = document.getElementById("kelas").value
+    var jurusan = document.getElementById("jurusan").value
 
-function hapusSiswa(nisn){
-
-if(confirm("Yakin hapus siswa?")){
-
-google.script.run
-.withSuccessHandler(function(){
-
-loadDataSiswa()
-
-})
-.hapusSiswa(nisn)
-
-}
-
-}
-
+    google.script.run
+      .withSuccessHandler(function () {
+        alert("Data siswa berhasil disimpan")
+        loadDataSiswa()
+      })
+      .tambahSiswa(nisn, nama, jk, kelas, jurusan)
+  }
 </script>
 
 <script>
-
-function loadDataMapel(){
-
-google.script.run
-.withSuccessHandler(function(data){
-
-var tbody = document.querySelector("#tabel_mapel tbody")
-
-tbody.innerHTML=""
-
-data.forEach(function(row){
-
-var tr=document.createElement("tr")
-
-tr.innerHTML=`
-<td>${row[0]}</td>
-<td>${row[1]}</td>
-<td>${row[2]}</td>
-<td>${row[3]}</td>
-<td>${row[4]}</td>
-<td><button onclick="hapusMapel('${row[0]}')">Hapus</button></td>
-`
-
-tbody.appendChild(tr)
-
-})
-
-})
-.getDataMapel()
-
-}
-
+  function hapusSiswa(nisn) {
+    if (confirm("Yakin hapus siswa?")) {
+      google.script.run
+        .withSuccessHandler(function () {
+          loadDataSiswa()
+        })
+        .hapusSiswa(nisn)
+    }
+  }
 </script>
 
 <script>
+  function loadDataMapel() {
+    google.script.run
+      .withSuccessHandler(function (data) {
+        var tbody = document.querySelector("#tabel_mapel tbody")
 
-function simpanMapel(){
+        tbody.innerHTML = ""
 
-var kode=document.getElementById("kode_mapel").value
-var nama=document.getElementById("nama_mapel").value
-var tingkat=document.getElementById("tingkat_mapel").value
-var jurusan=document.getElementById("jurusan_mapel").value
-var kkm=document.getElementById("kkm_mapel").value
+        data.forEach(function (row) {
+          var tr = document.createElement("tr")
 
-google.script.run
-.withSuccessHandler(function(){
+          tr.innerHTML = `
+            <td>${row[0]}</td>
+            <td>${row[1]}</td>
+            <td>${row[2]}</td>
+            <td>${row[3]}</td>
+            <td>${row[4]}</td>
+            <td><button onclick="hapusMapel('${row[0]}')">Hapus</button></td>
+          `
 
-alert("Mapel berhasil disimpan")
-
-loadDataMapel()
-
-})
-.tambahMapel(kode,nama,tingkat,jurusan,kkm)
-
-}
-
+          tbody.appendChild(tr)
+        })
+      })
+      .getDataMapel()
+  }
 </script>
 
 <script>
+  function simpanMapel() {
+    var kode = document.getElementById("kode_mapel").value
+    var nama = document.getElementById("nama_mapel").value
+    var tingkat = document.getElementById("tingkat_mapel").value
+    var jurusan = document.getElementById("jurusan_mapel").value
+    var kkm = document.getElementById("kkm_mapel").value
 
-function uploadFile(){
-
-var file = document.getElementById("fileUpload").files[0]
-
-if(!file){
-
-alert("Pilih file terlebih dahulu")
-
-return
-
-}
-
-var reader = new FileReader()
-
-reader.onload = function(e){
-
-var data = e.target.result
-
-var mapel = document.getElementById("mapel_import").value
-var semester = document.getElementById("semester_import").value
-var tahun = document.getElementById("tahun_import").value
-
-google.script.run
-.withSuccessHandler(function(res){
-
-document.getElementById("status_import").innerHTML="Import selesai"
-
-})
-.importNilai(data,file.name,mapel,semester,tahun)
-
-}
-
-reader.readAsDataURL(file)
-
-}
-
+    google.script.run
+      .withSuccessHandler(function () {
+        alert("Mapel berhasil disimpan")
+        loadDataMapel()
+      })
+      .tambahMapel(kode, nama, tingkat, jurusan, kkm)
+  }
 </script>
 
 <script>
+  function uploadFile() {
+    var file = document.getElementById("fileUpload").files[0]
 
-function buatRapor(){
+    if (!file) {
+      alert("Pilih file terlebih dahulu")
+      return
+    }
 
-var nisn = document.getElementById("nisn_rapor").value
-var semester = document.getElementById("semester_rapor").value
-var tahun = document.getElementById("tahun_rapor").value
+    var reader = new FileReader()
 
-google.script.run
-.withSuccessHandler(function(url){
+    reader.onload = function (e) {
+      var data = e.target.result
 
-document.getElementById("link_pdf").innerHTML =
-"<a href='"+url+"' target='_blank'>Download Rapor</a>"
+      var mapel = document.getElementById("mapel_import").value
+      var semester = document.getElementById("semester_import").value
+      var tahun = document.getElementById("tahun_import").value
 
-})
-.generateRapor(nisn,semester,tahun)
+      google.script.run
+        .withSuccessHandler(function (res) {
+          document.getElementById("status_import").innerHTML = "Import selesai"
+        })
+        .importNilai(data, file.name, mapel, semester, tahun)
+    }
 
-}
-
+    reader.readAsDataURL(file)
+  }
 </script>
 
 <script>
+  function buatRapor() {
+    var nisn = document.getElementById("nisn_rapor").value
+    var semester = document.getElementById("semester_rapor").value
+    var tahun = document.getElementById("tahun_rapor").value
 
-function generateKelas(){
-
-var kelas = document.getElementById("kelas_rapor").value
-var semester = document.getElementById("semester_rapor").value
-var tahun = document.getElementById("tahun_rapor").value
-
-google.script.run
-.withSuccessHandler(function(data){
-
-var html=""
-
-data.forEach(function(url){
-
-html += "<a href='"+url+"' target='_blank'>Download Rapor</a><br>"
-
-})
-
-document.getElementById("hasil_rapor").innerHTML=html
-
-})
-.generateRaporKelas(kelas,semester,tahun)
-
-}
-
+    google.script.run
+      .withSuccessHandler(function (url) {
+        document.getElementById("link_pdf").innerHTML =
+          "<a href='" + url + "' target='_blank'>Download Rapor</a>"
+      })
+      .generateRapor(nisn, semester, tahun)
+  }
 </script>
 
-function loadDashboard(){
+<script>
+  function generateKelas() {
+    var kelas = document.getElementById("kelas_rapor").value
+    var semester = document.getElementById("semester_rapor").value
+    var tahun = document.getElementById("tahun_rapor").value
 
-google.script.run
-.withSuccessHandler(function(res){
+    google.script.run
+      .withSuccessHandler(function (data) {
+        var html = ""
 
-document.getElementById("jumlah_siswa").innerHTML = res.siswa
-document.getElementById("jumlah_mapel").innerHTML = res.mapel
-document.getElementById("jumlah_kelas").innerHTML = res.kelas
+        data.forEach(function (url) {
+          html += "<a href='" + url + "' target='_blank'>Download Rapor</a><br>"
+        })
 
-})
-.getStatistik()
+        document.getElementById("hasil_rapor").innerHTML = html
+      })
+      .generateRaporKelas(kelas, semester, tahun)
+  }
+</script>
 
-}
+<script>
+  function loadDashboard() {
+    google.script.run
+      .withSuccessHandler(function (res) {
+        document.getElementById("jumlah_siswa").innerHTML = res.siswa
+        document.getElementById("jumlah_mapel").innerHTML = res.mapel
+        document.getElementById("jumlah_kelas").innerHTML = res.kelas
+      })
+      .getStatistik()
+  }
+</script>
