@@ -1,32 +1,22 @@
 <!DOCTYPE html>
 <html>
+  <head>
+    <meta charset="UTF-8">
+    <title>E-Rapor SMK</title>
+    <?!= include('style'); ?>
+  </head>
 
-<head>
+  <body>
+    <?!= include('header'); ?>
 
-<meta charset="UTF-8">
+    <div class="container">
+      <?!= include('sidebar'); ?>
 
-<title>E-Rapor SMK</title>
+      <div class="content">
+        <?!= include(page); ?>
+      </div>
+    </div>
 
-<?!= include('style'); ?>
-
-</head>
-
-<body>
-
-<?!= include('header'); ?>
-
-<div class="container">
-
-<?!= include('sidebar'); ?>
-
-<div class="content">
-<?!= include(page); ?>
-</div>
-
-</div>
-
-<?!= include('main'); ?>
-
-</body>
-
+    <?!= include('main'); ?>
+  </body>
 </html>
