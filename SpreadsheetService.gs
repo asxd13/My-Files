@@ -1,7 +1,5 @@
-function getSheet(name){
-
-return SpreadsheetApp
-.getActive()
-.getSheetByName(name)
-
+function getSheet(name) {
+  return SpreadsheetApp
+    .getActive()
+    .getSheetByName(name);
 }
