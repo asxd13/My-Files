@@ -1,5 +1,3 @@
-GitHub Copilot Chat Assistant
-
 function getDataKelas() {
   var sheet = getSheet("DATA_KELAS");
   var data = sheet.getDataRange().getValues();
